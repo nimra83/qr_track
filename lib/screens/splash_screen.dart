@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:animate_gradient/animate_gradient.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,15 +51,15 @@ class _MySplashState extends State<MySplash> {
               .get();
           MyMainpage.currentUser = UserModel.fromJson(userData.docs.first.data());
           if (!mounted) return;
-          Navigator.pushNamed(context, Dashboard.routename);
+          Navigator.pushReplacementNamed(context, Dashboard.routename);
         } catch (e) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-          Navigator.pushNamed(context, MyLogin.routename);
+          Navigator.pushReplacementNamed(context, MyLogin.routename);
         }
       } else {
         if (!mounted) return;
-        Navigator.pushNamed(context, MyLogin.routename);
+        Navigator.pushReplacementNamed(context, MyLogin.routename);
       }
     });
   }
@@ -68,21 +70,47 @@ class _MySplashState extends State<MySplash> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage(
-              "assets/images/img.jpg",
-            ),
-          ),
-        ),
-        child: const Center(
-          child: Text(
-            'SPLASH',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+        color: Colors.white,
+        child: AnimateGradient(
+          primaryBegin: Alignment.topLeft,
+          primaryEnd: Alignment.bottomLeft,
+          secondaryBegin: Alignment.bottomLeft,
+          secondaryEnd: Alignment.topRight,
+          primaryColors: const [
+            Colors.purple,
+            Colors.purpleAccent,
+            Colors.deepPurple,
+          ],
+          secondaryColors: const [
+            Colors.white,
+            Colors.purpleAccent,
+            Colors.deepPurple,
+          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/images/Logo.png'),
+              Center(
+                child: AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText(
+                      'FOOD SAVER',
+                      textStyle: const TextStyle(
+                        fontSize: 48.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
+                      speed: const Duration(milliseconds: 200),
+                    ),
+                  ],
+
+                  totalRepeatCount: 1,
+                  displayFullTextOnTap: true,
+                  stopPauseOnTap: true,
+                ),
+              ),
+            ],
           ),
         ),
       ),

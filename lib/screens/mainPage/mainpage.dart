@@ -196,11 +196,7 @@ class _MyMainpageState extends State<MyMainpage> {
                                       await SharedPreferences.getInstance();
                                   sharedPreference.clear();
                                   FirebaseAuth.instance.signOut();
-                                  Navigator.popUntil(
-                                      context,
-                                      (route) =>
-                                          route.settings.name ==
-                                          MyLogin.routename);
+                                  Navigator.pushReplacementNamed(context, MyLogin.routename);
                                 },
                                 child: const CircleAvatar(
                                   child: Icon(
