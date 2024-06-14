@@ -166,11 +166,16 @@ class MyLogin extends StatelessWidget {
                     height: 40,
                   ),
                   // google or facebook button images
-                  const Row(
+                  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // google button image
-                        MyImage(imagePath: "assets/icons/google.jpg"),
+                        InkWell(onTap: (){
+                          AuthenticationServices.signInWithGoogle().then((value){
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logged in with Gmail")));
+                            Navigator.pushReplacementNamed(context, Dashboard.routename);
+                          });
+                        },child: MyImage(imagePath: "assets/icons/google.jpg")),
                         SizedBox(width: 15),
                         // facebook button image
                         MyImage(imagePath: "assets/icons/facebook.jpg"),

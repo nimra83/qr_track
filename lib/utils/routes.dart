@@ -8,6 +8,7 @@ import 'package:food_saver/screens/food_details_screen.dart';
 import 'package:food_saver/screens/forget/changepassword.dart';
 import 'package:food_saver/screens/forget/forgetpassword.dart';
 import 'package:food_saver/screens/login/login.dart';
+import 'package:food_saver/screens/mainPage/foods_page.dart';
 import 'package:food_saver/screens/mainPage/iteamlist.dart';
 import 'package:food_saver/screens/mainPage/mainpage.dart';
 import 'package:food_saver/screens/profile_screen.dart';
@@ -25,6 +26,7 @@ final Map<String, WidgetBuilder> routes = {
   Dashboard.routename: (context) => Dashboard(),
   ProfileScreen.routename: (context) => ProfileScreen(),
   LocationScreen.routename: (context) => ProfileScreen(),
+  FoodsPage.routename: (context) => FoodsPage(),
   FoodDetailsScreen.routename: (context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final foodModel = FoodModel.fromJson(args['foodItem']);

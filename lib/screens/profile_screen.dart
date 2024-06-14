@@ -8,8 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:food_saver/screens/login/login.dart';
 import 'package:food_saver/screens/mainPage/mainpage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -40,10 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .update({field: value});
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${field} updated successfully')));
-        MyMainpage.getCurrentUser().then((value){
-          setState(() {
-
-          });
+        MyMainpage.getCurrentUser().then((value) {
+          setState(() {});
         });
       } else {
         ScaffoldMessenger.of(context)
@@ -112,6 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Text(
             'Profile',
           ),
+          centerTitle: true,
           automaticallyImplyLeading: false,
         ),
         body: Padding(
@@ -124,34 +125,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 100,
-                      backgroundColor: Colors.grey[200],  // You can set a background color if needed
+                      backgroundColor: Colors.grey[
+                          200], // You can set a background color if needed
                       child: MyMainpage.currentUser != null
-                          ? (MyMainpage.currentUser!.imageUrl != null && MyMainpage.currentUser!.imageUrl!.isNotEmpty
-                          ? ClipOval(
-                        child: FadeInImage(
-                          placeholder: AssetImage('assets/icons/user.png'),
-                          image: NetworkImage(MyMainpage.currentUser!.imageUrl!),
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/icons/user.png',
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      )
-                          : ClipOval(
-                        child: Image.asset(
-                          'assets/placeholder.png',
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ))
+                          ? (MyMainpage.currentUser!.imageUrl != null &&
+                                  MyMainpage.currentUser!.imageUrl!.isNotEmpty
+                              ? ClipOval(
+                                  child: FadeInImage(
+                                    placeholder:
+                                        AssetImage('assets/icons/user.png'),
+                                    image: NetworkImage(
+                                        MyMainpage.currentUser!.imageUrl!),
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/icons/user.png',
+                                        width: 200,
+                                        height: 200,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : ClipOval(
+                                  child: Image.asset(
+                                    'assets/icons/user.png',
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ))
                           : const CircularProgressIndicator(),
                     ),
                     Positioned(
@@ -186,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     children: [
                                                       Container(
                                                         width: 350,
-                                                        height: 500,
+                                                        height: 350,
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(20),
@@ -198,13 +204,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .spaceBetween,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           children: [
                                                             Center(
-                                                                child: Image.file(
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    File(pickedImage
-                                                                        .path))),
+                                                                child:
+                                                                    Container(
+                                                              width: 350,
+                                                              height: 350,
+                                                              decoration: BoxDecoration(
+                                                                  image: DecorationImage(
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                      image: FileImage(
+                                                                          scale:
+                                                                              0.5,
+                                                                          File(pickedImage
+                                                                              .path)))),
+                                                            )),
                                                             ElevatedButton(
                                                               style: ElevatedButton.styleFrom(
                                                                   maximumSize:
@@ -219,9 +236,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                       Colors
                                                                           .deepPurple),
                                                               onPressed: () {
-                                                                uploadFileToFirebase(File(pickedImage.path), context).then((value){
-                                                                  Navigator.pop(context);
-                                                                  Navigator.pop(context);
+                                                                uploadFileToFirebase(
+                                                                        File(pickedImage
+                                                                            .path),
+                                                                        context)
+                                                                    .then(
+                                                                        (value) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.pop(
+                                                                      context);
                                                                 });
                                                               },
                                                               child: const Text(
@@ -300,9 +324,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                       Colors
                                                                           .deepPurple),
                                                               onPressed: () {
-                                                                uploadFileToFirebase(File(pickedImage.path), context).then((value){
-                                                                  Navigator.pop(context);
-                                                                  Navigator.pop(context);
+                                                                uploadFileToFirebase(
+                                                                        File(pickedImage
+                                                                            .path),
+                                                                        context)
+                                                                    .then(
+                                                                        (value) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.pop(
+                                                                      context);
                                                                 });
                                                               },
                                                               child: const Text(
@@ -646,7 +677,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       maximumSize: Size(MediaQuery.of(context).size.width, 50),
                       minimumSize: Size(MediaQuery.of(context).size.width, 50),
                       backgroundColor: Colors.deepPurple),
-                  onPressed: () {},
+                  onPressed: () async {
+                    SharedPreferences sharedPreferences =
+                        await SharedPreferences.getInstance();
+                    sharedPreferences.clear();
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, MyLogin.routename, (route) => false);
+                  },
                   child: const Text(
                     'Logout',
                     style: TextStyle(
