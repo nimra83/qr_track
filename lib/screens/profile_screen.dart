@@ -625,7 +625,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             MediaQuery.of(context).size.width,
                                             50),
                                         backgroundColor: Colors.deepPurple),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (passwordFormKey.currentState!
                                           .validate()) {
                                         reAuthenticateUser(
@@ -637,12 +637,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               newPasswordController.text);
                                           updateUserField("password",
                                                   newPasswordController.text)
-                                              .then((value) {
+                                              .then((value) async {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
                                                     content: Text(
                                                         "Password Updated Successfully")));
-                                            Navigator.pop(context);
+                                            SharedPreferences
+                                                sharedPreferences =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            sharedPreferences
+                                                .clear()
+                                                .then((value) {
+                                              Navigator.pop(context);
+                                            });
                                           });
                                         });
                                       }

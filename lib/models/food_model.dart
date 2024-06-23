@@ -13,6 +13,7 @@ class FoodModel {
   String? addedBy;
   String? pickedBy;
   bool? picked;
+  double? rating;
 
   FoodModel({
     this.foodId,
@@ -26,6 +27,7 @@ class FoodModel {
     this.addedBy,
     this.pickedBy,
     this.picked = false,
+    this.rating,
   });
 
   FoodModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class FoodModel {
     addedBy = json['addedBy'];
     pickedBy = json['pickedBy'];
     picked = json['picked'];
+    rating = json['rating'];
   }
 
   Map<String, dynamic> toJson() {
@@ -55,6 +58,7 @@ class FoodModel {
     data['addedBy'] = addedBy;
     data['pickedBy'] = pickedBy;
     data['picked'] = picked;
+    data['rating'] = rating;
     return data;
   }
 }

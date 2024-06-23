@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:food_saver/models/food_model.dart';
+import 'package:food_saver/screens/food_details_screen.dart';
 
 class FoodsPage extends StatefulWidget {
   const FoodsPage({super.key});
@@ -98,23 +99,32 @@ class _FoodsPageState extends State<FoodsPage> {
                 itemCount: foodItemsList.length,
                 itemBuilder: ((context, index) {
                   FoodModel foodModel = foodItemsList[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text(foodModel.foodName.toString()),
-                      subtitle: Text(foodModel.details.toString()),
-                      trailing: Container(
-                        width: 55,
-                        height: 25,
-                        decoration: BoxDecoration(
-                            color: (foodModel.picked ?? false)
-                                ? Colors.red
-                                : Colors.green,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Center(
-                            child: Text(
-                          (foodModel.picked ?? false) ? 'Picked' : 'Available',
-                          style: TextStyle(color: Colors.white),
-                        )),
+                  return InkWell(
+                    onTap: () {
+                      final jsonData = foodModel.toJson();
+                      Navigator.pushNamed(context, FoodDetailsScreen.routename,
+                          arguments: {'foodItem': jsonData});
+                    },
+                    child: Card(
+                      child: ListTile(
+                        title: Text(foodModel.foodName.toString()),
+                        subtitle: Text(foodModel.details.toString()),
+                        trailing: Container(
+                          width: 55,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              color: (foodModel.picked ?? false)
+                                  ? Colors.red
+                                  : Colors.green,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Center(
+                              child: Text(
+                            (foodModel.picked ?? false)
+                                ? 'Picked'
+                                : 'Available',
+                            style: TextStyle(color: Colors.white),
+                          )),
+                        ),
                       ),
                     ),
                   );

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:food_saver/screens/mainPage/foods_page.dart';
 import 'package:food_saver/screens/mainPage/iteamlist.dart';
 import 'package:food_saver/screens/mainPage/mainpage.dart';
 import 'package:food_saver/screens/profile_screen.dart';
+import 'package:food_saver/screens/rating_screen.dart';
 import 'package:food_saver/screens/registertaion/register.dart';
 import 'package:food_saver/screens/splash_screen.dart';
 
@@ -27,8 +30,15 @@ final Map<String, WidgetBuilder> routes = {
   ProfileScreen.routename: (context) => ProfileScreen(),
   LocationScreen.routename: (context) => ProfileScreen(),
   FoodsPage.routename: (context) => FoodsPage(),
+  RatingScreen.routename: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final String foodId = args['foodId'];
+    return RatingScreen(foodId: foodId,);
+  },
   FoodDetailsScreen.routename: (context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final foodModel = FoodModel.fromJson(args['foodItem']);
     return FoodDetailsScreen(foodModel: foodModel);
   },

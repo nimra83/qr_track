@@ -1,26 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:food_saver/models/food_model.dart';
 import 'package:food_saver/models/user_model.dart';
 import 'package:food_saver/screens/food_details_screen.dart';
-import 'package:food_saver/screens/login/login.dart';
 import 'package:food_saver/screens/login/textfom.dart';
-import 'package:food_saver/screens/mainPage/addIteamButton.dart';
 import 'package:food_saver/screens/mainPage/foods_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,6 +28,23 @@ class MyMainpage extends StatefulWidget {
             isEqualTo: FirebaseAuth.instance.currentUser!.email.toString())
         .get();
     MyMainpage.currentUser = UserModel.fromJson(user.docs.first.data());
+  }
+
+  static Future<void> removeFoodItemById(String foodId) async {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection('foods');
+    try {
+      QuerySnapshot querySnapshot =
+          await collection.where('foodId', isEqualTo: foodId).get();
+      if (querySnapshot.docs.isNotEmpty) {
+        await querySnapshot.docs.first.reference.delete();
+        print('Food item with ID $foodId removed successfully');
+      } else {
+        print('Food item with ID $foodId not found');
+      }
+    } catch (e) {
+      print('Failed to remove food item: $e');
+    }
   }
 
   @override
@@ -297,17 +306,67 @@ class _MyMainpageState extends State<MyMainpage> {
                                             FoodDetailsScreen.routename,
                                             arguments: {'foodItem': jsonData});
                                       },
-                                      child: Card(
-                                        child: ListTile(
-                                          leading: const CircleAvatar(
-                                            child: Icon(Icons.food_bank),
+                                      child: InkWell(
+                                        onLongPress: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  icon: Icon(Icons.warning),
+                                                  title: Text(
+                                                      'Are you sure to delete the item (${foodItem.foodName})?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        EasyLoading.show(
+                                                            status:
+                                                                'Deleting Food Item');
+                                                        MyMainpage.removeFoodItemById(
+                                                                foodItem.foodId
+                                                                    .toString())
+                                                            .then((value) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                'Food Item Deleted Successfully',
+                                                              ),
+                                                            ),
+                                                          );
+                                                          getFoodItems()
+                                                              .then((value) {
+                                                            EasyLoading
+                                                                .dismiss();
+                                                            Navigator.pop(
+                                                                context);
+                                                          });
+                                                        });
+                                                      },
+                                                      child: Text('Yes'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text('No'),
+                                                    ),
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                        child: Card(
+                                          child: ListTile(
+                                            leading: const CircleAvatar(
+                                              child: Icon(Icons.food_bank),
+                                            ),
+                                            title: Text(
+                                                foodItem.foodName.toString()),
+                                            subtitle: Text(
+                                                foodItem.details.toString()),
+                                            trailing: const Icon(
+                                                Icons.arrow_forward_ios),
                                           ),
-                                          title: Text(
-                                              foodItem.foodName.toString()),
-                                          subtitle:
-                                              Text(foodItem.details.toString()),
-                                          trailing: const Icon(
-                                              Icons.arrow_forward_ios),
                                         ),
                                       ),
                                     );

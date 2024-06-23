@@ -52,6 +52,7 @@ dependencies:
   animate_gradient: ^0.0.3
   animated_text_kit: ^4.2.2
   google_sign_in: ^6.2.1
+  flutter_rating_stars: ^1.1.0
 
 dev_dependencies:
   flutter_test:
