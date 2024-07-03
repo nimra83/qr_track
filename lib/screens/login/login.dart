@@ -13,6 +13,7 @@ class MyLogin extends StatelessWidget {
   MyLogin({super.key});
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   void saveDataToSharedPreferences(String email, String password) async {
@@ -56,7 +57,7 @@ class MyLogin extends StatelessWidget {
                     validator: (value) {
                       if (value.toString().isEmpty) {
                         return "Email can't be empty.";
-                      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                      } else if (RegExp(r'^[!^@]+@[^@]+\.[^@]+')
                           .hasMatch(value.toString())) {
                         return "Email is not valid";
                       } else {

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:io';
 import 'dart:math';
 
@@ -8,6 +10,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:food_saver/models/user_model.dart';
 import 'package:food_saver/screens/login/login.dart';
 import 'package:food_saver/screens/mainPage/mainpage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -74,8 +78,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       await user?.updatePassword(newPassword);
-      // Optionally, sign out the user to force re-login
-      // await FirebaseAuth.instance.signOut();
     } catch (e) {
       // Handle error
       print('Password update failed: $e');
@@ -83,6 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> uploadFileToFirebase(File image, BuildContext context) async {
+    EasyLoading.show(status: 'Uploading');
     FirebaseStorage firebaseStorage = FirebaseStorage.instance;
     try {
       TaskSnapshot snapshot = await firebaseStorage
@@ -102,6 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SnackBar(content: Text("Failed to upload image: $e")),
       );
     }
+    EasyLoading.dismiss();
   }
 
   @override
@@ -155,209 +159,151 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     'assets/icons/user.png',
                                     width: 200,
                                     height: 200,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                   ),
                                 ))
                           : const CircularProgressIndicator(),
                     ),
                     Positioned(
                       top: 20,
-                      right: MediaQuery.of(context).size.width * 0.07,
+                      right: MediaQuery.of(context).size.width * 0.05,
                       child: InkWell(
                         onTap: () {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text('Choose an Option'),
+                                  title: Text('Pick Image'),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       InkWell(
                                         onTap: () async {
-                                          ImagePicker picker = ImagePicker();
+                                          ImagePicker imagePicker =
+                                              ImagePicker();
                                           XFile? pickedImage =
-                                              await picker.pickImage(
+                                              await imagePicker.pickImage(
                                                   source: ImageSource.camera);
                                           if (pickedImage != null) {
-                                            showDialog(
+                                            showModalBottomSheet(
                                                 context: context,
                                                 builder: (context) {
-                                                  return Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Container(
-                                                        width: 350,
-                                                        height: 350,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(20),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                                color: Colors
-                                                                    .white),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Center(
-                                                                child:
-                                                                    Container(
-                                                              width: 350,
-                                                              height: 350,
-                                                              decoration: BoxDecoration(
-                                                                  image: DecorationImage(
-                                                                      fit: BoxFit
-                                                                          .contain,
-                                                                      image: FileImage(
-                                                                          scale:
-                                                                              0.5,
-                                                                          File(pickedImage
-                                                                              .path)))),
-                                                            )),
-                                                            ElevatedButton(
-                                                              style: ElevatedButton.styleFrom(
-                                                                  maximumSize:
-                                                                      const Size(
-                                                                          300,
-                                                                          50),
-                                                                  minimumSize:
-                                                                      const Size(
-                                                                          300,
-                                                                          50),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .deepPurple),
-                                                              onPressed: () {
-                                                                uploadFileToFirebase(
-                                                                        File(pickedImage
-                                                                            .path),
-                                                                        context)
-                                                                    .then(
-                                                                        (value) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                });
-                                                              },
-                                                              child: const Text(
-                                                                'Select',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 18,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                  return Container(
+                                                    padding: EdgeInsets.all(20),
+                                                    height: 500,
+                                                    width: double.infinity,
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          'Image Preview',
+                                                          style: TextStyle(
+                                                            fontSize: 24,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 450,
+                                                          child: Image.file(
+                                                              fit: BoxFit.cover,
+                                                              File(pickedImage
+                                                                  .path)),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        ElevatedButton(
+                                                            onPressed: () {
+                                                              uploadFileToFirebase(
+                                                                      File(pickedImage
+                                                                          .path),
+                                                                      context)
+                                                                  .then(
+                                                                      (value) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              });
+                                                            },
+                                                            child:
+                                                                Text('Upload'))
+                                                      ],
+                                                    ),
                                                   );
                                                 });
                                           }
                                         },
-                                        child: const ListTile(
+                                        child: ListTile(
                                           title: Text('Camera'),
                                           leading: Icon(Icons.camera_alt),
                                         ),
                                       ),
                                       InkWell(
                                         onTap: () async {
-                                          ImagePicker picker = ImagePicker();
+                                          ImagePicker imagePicker =
+                                              ImagePicker();
                                           XFile? pickedImage =
-                                              await picker.pickImage(
+                                              await imagePicker.pickImage(
                                                   source: ImageSource.gallery);
                                           if (pickedImage != null) {
-                                            showDialog(
+                                            showModalBottomSheet(
                                                 context: context,
                                                 builder: (context) {
-                                                  return Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Container(
-                                                        width: 350,
-                                                        height: 500,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(20),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                                color: Colors
-                                                                    .white),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Center(
-                                                              child: Image.file(
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  File(pickedImage
-                                                                      .path)),
-                                                            ),
-                                                            ElevatedButton(
-                                                              style: ElevatedButton.styleFrom(
-                                                                  maximumSize:
-                                                                      const Size(
-                                                                          300,
-                                                                          50),
-                                                                  minimumSize:
-                                                                      const Size(
-                                                                          300,
-                                                                          50),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .deepPurple),
-                                                              onPressed: () {
-                                                                uploadFileToFirebase(
-                                                                        File(pickedImage
-                                                                            .path),
-                                                                        context)
-                                                                    .then(
-                                                                        (value) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                });
-                                                              },
-                                                              child: const Text(
-                                                                'Select',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 18,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                  return Container(
+                                                    margin: EdgeInsets.all(20),
+                                                    height: 500,
+                                                    width: double.infinity,
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          'Image Preview',
+                                                          style: TextStyle(
+                                                              fontSize: 24,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 300,
+                                                          child: Image.file(
+                                                              File(pickedImage
+                                                                  .path)),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                        ElevatedButton(
+                                                            onPressed: () {
+                                                              uploadFileToFirebase(
+                                                                      File(pickedImage
+                                                                          .path),
+                                                                      context)
+                                                                  .then(
+                                                                      (value) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              });
+                                                            },
+                                                            child:
+                                                                Text('Upload'))
+                                                      ],
+                                                    ),
                                                   );
                                                 });
                                           }
                                         },
-                                        child: const ListTile(
+                                        child: ListTile(
                                           title: Text('Gallery'),
-                                          leading:
-                                              Icon(Icons.photo_camera_back),
+                                          leading: Icon(Icons.browse_gallery),
                                         ),
                                       ),
                                     ],
@@ -394,55 +340,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         TextEditingController nameController =
                             TextEditingController();
+                        final formKey = GlobalKey<FormState>();
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: const Text("Change Name"),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextFormField(
-                                        controller: nameController,
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            contentPadding:
-                                                const EdgeInsets.all(10),
-                                            hintText: "New Name"),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Field can't be empty";
-                                          } else if (value ==
-                                              MyMainpage.currentUser!.username
-                                                  .toString()) {
-                                            return "Old and New Name can't be same";
-                                          } else {
-                                            return null;
+                                content: Form(
+                                  key: formKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextFormField(
+                                          controller: nameController,
+                                          decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              contentPadding:
+                                                  const EdgeInsets.all(10),
+                                              hintText: "New Name"),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Field can't be empty";
+                                            } else if (value ==
+                                                MyMainpage.currentUser!.username
+                                                    .toString()) {
+                                              return "Old and New Name can't be same";
+                                            } else {
+                                              return null;
+                                            }
+                                          }),
+                                      const SizedBox(height: 10),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            maximumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                50),
+                                            minimumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                50),
+                                            backgroundColor: Colors.black),
+                                        onPressed: () {
+                                          if (formKey.currentState!
+                                              .validate()) {
+                                            updateUserField("username",
+                                                    nameController.text)
+                                                .then((value) {
+                                              Navigator.pop(context);
+                                            });
                                           }
-                                        }),
-                                    const SizedBox(height: 10),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          maximumSize: Size(
-                                              MediaQuery.of(context).size.width,
-                                              50),
-                                          minimumSize: Size(
-                                              MediaQuery.of(context).size.width,
-                                              50),
-                                          backgroundColor: Colors.black),
-                                      onPressed: () {
-                                        updateUserField(
-                                                "username", nameController.text)
-                                            .then((value) {
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                      child: const Text("Update"),
-                                    ),
-                                  ],
+                                        },
+                                        child: const Text("Update"),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             });
@@ -473,57 +430,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         TextEditingController phoneNoController =
                             TextEditingController();
+                        final formKey = GlobalKey<FormState>();
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: const Text("Change Phone No"),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextFormField(
-                                        controller: phoneNoController,
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            contentPadding:
-                                                const EdgeInsets.all(10),
-                                            hintText: "New Phone No"),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Field can't be empty";
-                                          } else if (value ==
-                                              MyMainpage.currentUser!.phone
-                                                  .toString()) {
-                                            return "Old and New Phone can't be same";
-                                          } else if (value.length < 11) {
-                                            return "Invalid Phone Number";
-                                          } else {
-                                            return null;
+                                content: Form(
+                                  key: formKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextFormField(
+                                          controller: phoneNoController,
+                                          decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              contentPadding:
+                                                  const EdgeInsets.all(10),
+                                              hintText: "New Phone No"),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Field can't be empty";
+                                            } else if (value ==
+                                                MyMainpage.currentUser!.phone
+                                                    .toString()) {
+                                              return "Old and New Phone can't be same";
+                                            } else if (value.length < 11) {
+                                              return "Invalid Phone Number";
+                                            } else {
+                                              return null;
+                                            }
+                                          }),
+                                      const SizedBox(height: 10),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            maximumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                50),
+                                            minimumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                50),
+                                            backgroundColor: Colors.black),
+                                        onPressed: () {
+                                          if (formKey.currentState!
+                                              .validate()) {
+                                            updateUserField("phone",
+                                                    phoneNoController.text)
+                                                .then((value) {
+                                              Navigator.pop(context);
+                                            });
                                           }
-                                        }),
-                                    const SizedBox(height: 10),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          maximumSize: Size(
-                                              MediaQuery.of(context).size.width,
-                                              50),
-                                          minimumSize: Size(
-                                              MediaQuery.of(context).size.width,
-                                              50),
-                                          backgroundColor: Colors.black),
-                                      onPressed: () {
-                                        updateUserField(
-                                                "phone", phoneNoController.text)
-                                            .then((value) {
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                      child: const Text("Update"),
-                                    ),
-                                  ],
+                                        },
+                                        child: const Text("Update"),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             });
