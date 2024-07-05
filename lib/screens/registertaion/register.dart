@@ -112,6 +112,10 @@ class MyRegister extends StatelessWidget {
                       validator: (value) {
                         if (value.toString().isEmpty) {
                           return "Password can't be empty!";
+                        } else if (!RegExp(
+                                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).+$')
+                            .hasMatch(value.toString())) {
+                          return "Password must contain at least one lowercase letter, one uppercase letter, and one special symbol.";
                         } else if (value.toString().length < 6) {
                           return "Week Password!";
                         } else {
@@ -166,8 +170,7 @@ class MyRegister extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Signed up Successfully')));
-                              Navigator.pushNamed(
-                                  context, Dashboard.routename);
+                              Navigator.pushNamed(context, Dashboard.routename);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

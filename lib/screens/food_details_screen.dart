@@ -52,6 +52,17 @@ class _FoodDetailsScreenState extends State<FoodDetailsScreen> {
                       widget.foodModel.locationLng as double),
                 ),
               },
+              circles: {
+                Circle(
+                  circleId: const CircleId('radius'),
+                  center: LatLng(widget.foodModel.locationLat as double,
+                      widget.foodModel.locationLng as double),
+                  strokeColor: Colors.red,
+                  strokeWidth: 2,
+                  fillColor: Colors.red.withOpacity(0.2),
+                  radius: 500,
+                ),
+              },
             ),
             Container(
               padding: const EdgeInsets.all(20),
