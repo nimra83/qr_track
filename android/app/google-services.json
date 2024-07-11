@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "512953012186",
-    "project_id": "food-saver-369e8",
-    "storage_bucket": "food-saver-369e8.appspot.com"
+    "project_number": "1059766292331",
+    "project_id": "qr-track-d7650",
+    "storage_bucket": "qr-track-d7650.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:512953012186:android:3ba35c539c3e4c28e37ae3",
+        "mobilesdk_app_id": "1:1059766292331:android:2f93582fe8142c0d38862e",
         "android_client_info": {
-          "package_name": "com.uog.food_saver"
+          "package_name": "com.example.qr_track"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "512953012186-hpg9pv02ep40lt18aj1ur3g5ell0rfpu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.uog.food_saver",
-            "certificate_hash": "3d1fb10c73c9a9fc4b79337cd87c78dae90982b2"
-          }
-        },
-        {
-          "client_id": "512953012186-27gujne02bssuksq0onoc24td6npm3i1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD2VSSY6rGcaOL7QQ0gX0cSkfIm1rTMKQw"
+          "current_key": "AIzaSyAt_xf4dQfN8S7T97FpKrPYzm-aBPhDNcE"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "512953012186-27gujne02bssuksq0onoc24td6npm3i1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
